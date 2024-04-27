@@ -5,10 +5,16 @@ import cookieParser from 'cookie-parser';
 import compression from 'compression';
 import cors from 'cors';
 import mongoose from 'mongoose';
+import dotenv from 'dotenv';
 
+// 加载 .env 文件
+dotenv.config();
 import router from './router';
 
 const app = express();
+
+// 使用环境变量的端口，默认为 8080
+const PORT = process.env.PORT || 8080;
 
 app.use(cors({
     credentials: true,
@@ -20,11 +26,14 @@ app.use(bodyParser.json());
 
 const server = http.createServer(app);
 
-server.listen(8080, () =>{
-    console.log('Server running on http://localhost:8080/');
+server.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}/`);
 });
 
-const MONGO_URL = 'mongodb+srv://calvin:fuckyou88@cluster0.9l3viuh.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
+// 使用环境变量的 MongoDB 连接字符串
+const MONGO_URL = process.env.MONGO_URL;
+
+//const MONGO_URL = 'mongodb+srv://calvin:fuckyou88@cluster0.9l3viuh.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
 
 mongoose.Promise = Promise;
 mongoose.connect(MONGO_URL);
