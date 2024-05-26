@@ -7,8 +7,8 @@ import jwt from 'jsonwebtoken';
 let refreshTokens: string[] = [];
 
 export const token = async (req: express.Request, res: express.Response) => {
-    const refreshToken = req.header("x-auth-token");
-
+    //const refreshToken = req.header("x-auth-token");
+    const refreshToken = req.body.refreshToken;
     // 如果未提供令牌，发送错误消息
     if (!refreshToken) {
         return res.status(401).json({
@@ -122,7 +122,7 @@ export const login = async (req: express.Request, res: express.Response) => {
 }
 
 
-export const register = [
+export const signup = [
     // 验证输入
     check('email', 'Invalid email').isEmail(),
     check('password', 'Password must be at least 6 chars long').isLength({ min: 6 }),
@@ -170,12 +170,19 @@ export const register = [
                     expiresIn: "10s",
                 }
             );
+            const refreshToken = jwt.sign(
+                { email },
+                process.env.REFRESH_TOKEN_SECRET,
+                { expiresIn: "1m" }
+            );
 
-            // 将令牌添加到用户对象中
-            user.accessToken = accessToken;
+            refreshTokens.push(refreshToken);
 
-
-            return res.status(200).json(user).end();
+            return res.status(200).json({
+                user,
+                accessToken,
+                refreshToken
+            }).end();
 
         } catch (error) {
             console.log(error);

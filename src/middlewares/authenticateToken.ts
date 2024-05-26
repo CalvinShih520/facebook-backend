@@ -40,7 +40,7 @@ const authenticateToken = async (req: Request, res: Response, next: NextFunction
     return res.status(403).json({
       errors: [
         {
-          msg: "Invalid token",
+          msg: "Invalid or expired access token",
         },
       ],
     });

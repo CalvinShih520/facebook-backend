@@ -9,7 +9,7 @@ const UserSchema = new mongoose.Schema({
         sessionToken: { type: String, select: false },
     },
     accessToken:{ type: String, require: true },
-    refreshToken:{ type: String, require: false }
+    refreshToken:{ type: String, require: true }
 }, { collection: 'users' });
 
 export const UserModel = mongoose.model('User', UserSchema);
