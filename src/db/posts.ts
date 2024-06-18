@@ -1,17 +1,15 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
-const publicPostSchema = new mongoose.Schema({
-    title: { type: String, require: true},
-    content: { type: String, require: true},
-}, { collection: 'publicPosts' });
+const postSchema = new mongoose.Schema({
+    content: { type: String, required: true },
+    isPrivate: { type: Boolean, default: false },
+    user_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    createdAt: { type: Date, default: Date.now } // 自动生成创建时间
+}, { collection: 'posts' });
 
-export const publicPostsModel = mongoose.model('publicPost', publicPostSchema);
-export const getPublicPosts = () => publicPostsModel.find();
+export const postModel = mongoose.model('Post', postSchema);
 
-const privatePostSchema = new mongoose.Schema({
-    title: { type: String, require: true},
-    content: { type: String, require: true},
-}, { collection: 'privatePosts' });
+export const getPublicPosts = () => postModel.find({ isPrivate: false }).sort({ createdAt: -1 }).populate('user_id'); // 按创建时间降序排序
+export const getPrivatePosts = () => postModel.find({ isPrivate: true }).sort({ createdAt: -1 }).populate('user_id'); // 按创建时间降序排序
 
-export const privatePostsModel = mongoose.model('PrivatePost', privatePostSchema);
-export const getPrivatePosts = () => privatePostsModel.find();
+export const createPost = (values: Record<string, any>) => new postModel(values).save().then((post) => post.toObject());

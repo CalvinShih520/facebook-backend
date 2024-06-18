@@ -9,7 +9,7 @@ import dotenv from 'dotenv';
 
 // 加载 .env 文件
 dotenv.config();
-import router from './router';
+import router from './router/index'; 
 
 const app = express();
 
