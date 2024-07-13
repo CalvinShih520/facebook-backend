@@ -82,25 +82,28 @@ export const login = async (req: express.Request, res: express.Response) => {
         const salt = random();
         user.authentication.sessionToken = authentication(salt, user.id.toString());
 
-        await user.save();
+        
 
         // Send JWT access token
         const accessToken = await jwt.sign(
-            { email },
+            { email , _id: user._id },
             process.env.ACCESS_TOKEN_SECRET,
             {
-                expiresIn: "20s",
+                expiresIn: "30s",
             }
         );
 
         // Refresh token
         const refreshToken = await jwt.sign(
-            { email },
+            { email , _id: user._id },
             process.env.REFRESH_TOKEN_SECRET,
             {
                 expiresIn: "1m",
             }
         );
+        user.accessToken = accessToken;
+        user.refreshToken = refreshToken;
+        await user.save();
 
         // Set refersh token in refreshTokens array
         refreshTokens.push(refreshToken);
@@ -154,14 +157,7 @@ export const signup = [
             }
 
             const salt = random();
-            const user = await createUser({
-                email,
-                username,
-                authentication: {
-                    salt,
-                    password: authentication(salt, password),
-                }
-            });
+            
             // 生成访问令牌
             const accessToken = await jwt.sign(
                 { email },
@@ -177,6 +173,17 @@ export const signup = [
             );
 
             refreshTokens.push(refreshToken);
+
+            const user = await createUser({
+                email,
+                username,
+                authentication: {
+                    salt,
+                    password: authentication(salt, password),
+                },
+                accessToken,
+                refreshToken,
+            });
 
             return res.status(200).json({
                 user,

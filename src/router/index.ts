@@ -3,6 +3,7 @@ import authentication from './authentication';
 import users from './users';
 import getposts from './posts';
 import comments from './comments';
+import friends  from './friends';
 
 const router = express.Router();
 
@@ -11,6 +12,7 @@ export default (): express.Router => {
     users(router);
     getposts(router);
     comments(router);
+    friends(router);
 
     return router;
 };

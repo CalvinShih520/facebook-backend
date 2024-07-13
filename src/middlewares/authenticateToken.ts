@@ -20,9 +20,11 @@ const authenticateToken = (req: Request, res: Response, next: NextFunction) => {
     }
 
     const user = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET) as { email: string, _id: string };
+    console.log("Decoded user:", user);
     req.user = user;
     next();
   } catch (error) {
+    console.error("Token verification error:", error);
     return res.status(403).json({ message: "Invalid or expired access token" });
   }
 };
