@@ -19,6 +19,8 @@ const PORT = process.env.PORT || 8080;
 app.use(cors({
     origin: 'https://facebook.zeabur.app', // 替换为你的前端应用 URL
     credentials: true,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    allowedHeaders: 'Content-Type, Authorization, x-auth-token'
 }));
 
 app.use(compression());
